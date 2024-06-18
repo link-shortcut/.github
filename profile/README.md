@@ -1,8 +1,16 @@
 # Link Shortcut
 
-> URL 단축 서비스
+#### 손쉽게 URL을 단축하고, 필요할 때 즉시 만료 & 단축 URL 정보 조회할 수 있는 URL 단축 서비스
 
-- 서비스 링크 : https://lnsc.me
+##### 서비스 링크 : https://lnsc.me
+
+  <br />
+
+[서비스 개요](#서비스-개요)
+[서비스 기능](#서비스-기능)
+[서비스 아키텍처](#서비스-아키텍처)
+[ERD](#erd)
+[팀원 & 회고](#팀원--회고)
 
 ---
 
@@ -21,26 +29,51 @@
 
 - **입력한 만료일 다음날 0시까지 사용가능**한 단축 URL을 생성할 수 있습니다.
 - 단축 URL로 접속하면 입력했던 긴 URL 주소로 연결됩니다.
-  ![단축 URL 생성1](../assets/create1.png)
-  ![단축 URL 생성2](../assets/create2.png)
+  <br/>
+  <img src="../assets/create1.png" alt="단축 URL 생성1" width="700" height="450">
+  <img src="../assets/create2.png" alt="단축 URL 생성2" width="700" height="450">
+  <br/>
 
 ### 2. 단축 URL 즉시 만료
 
 - 생성시에 발급된 만료키를 가지고, 유효한 단축 URL을 즉시 만료시킬 수 있습니다.
-  ![단축 URL 만료1](../assets/expire1.png)
-  ![단축 URL 만료2](../assets/expire2.png)
+  <br/>
+  <img src="../assets/expire1.png" alt="단축 URL 만료1" width="700" height="450">
+  <img src="../assets/expire2.png" alt="단축 URL 만료2" width="700" height="450">
+  <br/>
 
 ### 3. 단축 URL 정보 조회
 
 - 유효한 단축 URL 주소 뒤에 */info*를 붙이면 단축 URL 정보 조회가 가능합니다.
 - 단축 URL이 어떤 긴 URL 주소로 연결되어있는지, 언제 만료되는지, 언제 생성되었는지, 당일 접속 인원수와 생성 후 접속 인원수를 확인할 수 있습니다.
-  ![단축 URL 정보 조회](../assets/info.png)
+  <br/>
+  <img src="../assets/info.png" alt="단축 URL 정보 조회" width="700" height="200">
 
 ---
 
 ## 서비스 아키텍처
 
+### 현재 운영 서버 아키텍처
+
 ![서비스 아키텍처](../assets/architecture.png)
+<br/>
+
+### 서버 아키텍처 V1 (단축 URL 구현 완료 시점)
+
+- 하나의 서버 내에서 모든 기능을 수행합니다.
+- Java의 Random 모듈을 사용하여 단축 URL Path를 생성하도록 구현하였습니다.
+  <br/>
+  <img src="../assets/v1_architecture.png" alt="서버 아키텍처 V1" width="400" height="300">
+  <br/>
+
+### 서버 아키텍처 V2 (개선 후)
+
+- 단축 URL Path 부분을 별도의 서버로 분리하였고, 각 서버는 Zookeeper로부터 Path 생성 가능 구간을 할당받은 후 요청에 따라 단축 URL Path를 발급합니다.
+- Path 생성 가능 구간을 전부 사용했으면, 다시 Zookeeper로부터 Path 생성 가능 구간을 할당받습니다.
+- 단축 URL Path는 고유해야 하므로, Random 모듈로 Path를 생성하는 방법은 가용 Path가 줄어들수록 충돌 확률이 올라가 추후 서비스 장애로 이어질 수 있었습니다.
+- 개선 이후에는 이론상 약 1조 개의 Path를 1회전 할때까지는 충돌이 발생하지 않으므로 더 안정적으로 서비스가 가능합니다.
+  <br/>
+  <img src="../assets/v2_architecture.png" alt="서버 아키텍처 V1" width="500" height="350">
 
 ---
 
@@ -52,9 +85,9 @@
 
 ## 팀원 & 회고
 
-| [이용진](https://github.com/yjlee0235)      |
-| ------------------------------------------- |
-| <img src="https://github.com/yjlee0235.png" alt="이용진" width="100" height="100"> |
+| [이용진](https://github.com/yjlee0235)                                             |
+| ---------------------------------------------------------------------------------- |
+| <img src="https://github.com/yjlee0235.png" alt="이용진" width="130" height="130"> |
 
 > 단순한 기능임에도 불구하고, 대규모 트래픽을 대비한다는 것은 고려할 점이 매우 많다는 것을 깨달았습니다. 그 과정에서 저의 부족한 부분이 어느 것인지 알게 되었고, 앞으로 나아가야 할 길이 멀다는 것을 알게 되었습니다.
 > 해당 프로젝트가 학습을 주목적으로 진행했지만, 실제 사용자가 저밖에 없어 운영상에서 만나는 문제들로 더 성장하는 경험을 거의 하지 못해 아쉬웠습니다. 또한 기술적으로 정말 뛰어난 서비스를 만들었다고 하더라도 실제 사용자가 없다면 의미가 없다는 점도 배웠습니다.
