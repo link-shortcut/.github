@@ -1,18 +1,21 @@
 # Link Shortcut
 
-#### 손쉽게 URL을 단축하고, 필요할 때 즉시 만료 & 단축 URL 정보 조회할 수 있는 URL 단축 서비스
+### 손쉽게 URL을 단축하고, 필요할 때 즉시 만료 & 단축 URL 정보 조회할 수 있는 URL 단축 서비스
 
-##### 서비스 링크 : https://lnsc.me
+#### 서비스 링크 : https://lnsc.me
 
   <br />
 
-[서비스 개요](#서비스-개요)
-[서비스 기능](#서비스-기능)
-[서비스 아키텍처](#서비스-아키텍처)
-[ERD](#erd)
-[팀원 & 회고](#팀원--회고)
+---
+
+[서비스 개요](#서비스-개요)<br />
+[서비스 기능](#서비스-기능)<br />
+[서비스 아키텍처](#서비스-아키텍처)<br />
+[ERD](#erd)<br />
+[팀원 & 회고](#팀원--회고)<br />
 
 ---
+<br />
 
 ## 서비스 개요
 
@@ -21,7 +24,7 @@
 - 기존 Random 모듈을 사용하는 방식에서 Zookeeper를 이용한 단축 URL Path 생성하는 서버를 분리하여 대규모 트래픽에서도 안정적으로 단축 URL을 생성할 수 있도록 개선하였습니다.
 - 일부 단축 URL에 트래픽이 몰리는 상황을 가정하여 캐시를 도입하고, 단축 URL 접속 기록 생성시 비동기로 작동하도록 개선하여 평균 응답시간 기준 약 29%의 성능을 향상시켰습니다.
 
----
+<br />
 
 ## 서비스 기능
 
@@ -29,42 +32,42 @@
 
 - **입력한 만료일 다음날 0시까지 사용가능**한 단축 URL을 생성할 수 있습니다.
 - 단축 URL로 접속하면 입력했던 긴 URL 주소로 연결됩니다.
-  <br/>
+  <br/><br />
   <img src="../assets/create1.png" alt="단축 URL 생성1" width="700" height="450">
   <img src="../assets/create2.png" alt="단축 URL 생성2" width="700" height="450">
-  <br/>
+  <br/><br />
 
 ### 2. 단축 URL 즉시 만료
 
 - 생성시에 발급된 만료키를 가지고, 유효한 단축 URL을 즉시 만료시킬 수 있습니다.
-  <br/>
+  <br/><br />
   <img src="../assets/expire1.png" alt="단축 URL 만료1" width="700" height="450">
   <img src="../assets/expire2.png" alt="단축 URL 만료2" width="700" height="450">
-  <br/>
+  <br/><br />
 
 ### 3. 단축 URL 정보 조회
 
 - 유효한 단축 URL 주소 뒤에 */info*를 붙이면 단축 URL 정보 조회가 가능합니다.
 - 단축 URL이 어떤 긴 URL 주소로 연결되어있는지, 언제 만료되는지, 언제 생성되었는지, 당일 접속 인원수와 생성 후 접속 인원수를 확인할 수 있습니다.
-  <br/>
+  <br/><br />
   <img src="../assets/info.png" alt="단축 URL 정보 조회" width="700" height="200">
 
----
+<br />
 
 ## 서비스 아키텍처
 
 ### 현재 운영 서버 아키텍처
 
-![서비스 아키텍처](../assets/architecture.png)
+<img src="../assets/architecture.png" alt="서버 아키텍처" width="840" height="600">
 <br/>
 
 ### 서버 아키텍처 V1 (단축 URL 구현 완료 시점)
 
 - 하나의 서버 내에서 모든 기능을 수행합니다.
 - Java의 Random 모듈을 사용하여 단축 URL Path를 생성하도록 구현하였습니다.
-  <br/>
+  <br/><br />
   <img src="../assets/v1_architecture.png" alt="서버 아키텍처 V1" width="400" height="300">
-  <br/>
+  <br/><br />
 
 ### 서버 아키텍처 V2 (개선 후)
 
@@ -72,16 +75,16 @@
 - Path 생성 가능 구간을 전부 사용했으면, 다시 Zookeeper로부터 Path 생성 가능 구간을 할당받습니다.
 - 단축 URL Path는 고유해야 하므로, Random 모듈로 Path를 생성하는 방법은 가용 Path가 줄어들수록 충돌 확률이 올라가 추후 서비스 장애로 이어질 수 있었습니다.
 - 개선 이후에는 이론상 약 1조 개의 Path를 1회전 할때까지는 충돌이 발생하지 않으므로 더 안정적으로 서비스가 가능합니다.
-  <br/>
+  <br/><br />
   <img src="../assets/v2_architecture.png" alt="서버 아키텍처 V1" width="500" height="350">
 
----
+<br />
 
 ## ERD
 
 ![ERD](../assets/erd.png)
 
----
+<br />
 
 ## 팀원 & 회고
 
